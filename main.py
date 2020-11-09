@@ -2,31 +2,25 @@ import telebot
 from settings import TOKEN
 from parser_book import random_citate
 import pickle
-import logging
+from logger.logging import log, configure_logging
+
 
 bot = telebot.TeleBot(token=TOKEN)
-log = logging.getLogger('bot')
 USER_ID = set()
-
-
-def configure_logging():
-    file_handler = logging.FileHandler('bot.log')
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s', '%Y-%m-%d %H:%M'))
-    file_handler.setLevel(logging.INFO)
-    log.addHandler(file_handler)
-
 
 keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
 keyboard.row('Тишина говорит...')
 
 
 def add_new_user(message):
-    with open('user_id.pickle', 'rb') as f:
+    with open('count_users/user_id.pickle', 'rb') as f:
         USER_ID = pickle.load(f)
         if message.from_user.id not in USER_ID:
             USER_ID.add(message.from_user.id)
-            with open('user_id.pickle', 'ab') as f:
+            with open('count_users/user_id.pickle', 'ab') as f:
                 pickle.dump(USER_ID, f)
+                log.info(f'Пользователь {message.from_user.first_name}, добавлен в базу.')
+        log.info(f'Пользователь {message.from_user.first_name}, находится в базе.')
 
 
 @bot.message_handler(commands=['start'])
