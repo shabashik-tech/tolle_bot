@@ -7,5 +7,3 @@ def random_citate():
     content = [x.strip() for x in content]
     return random.choice(content)
 
-
-random_citate = random_citate()
