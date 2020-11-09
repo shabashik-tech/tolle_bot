@@ -24,14 +24,20 @@ def add_new_user(message):
         users = pickle.load(f)
         if message.from_user.id not in users:
             with open('user_id.pickle', 'wb') as f:
+                # сделать ДОПИСЬ в файл, а не переписывание заново
                 pickle.dump(message.from_user.id, f)
-                log.info(f'add new user - {message.from_user.first_name}')
+                log.info(f'Add new user - {message.from_user.first_name}')
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    answer = f'Приветствую тебя {message.from_user.first_name}! ' \
-             f'Этот бот предназначен для медитации над сутрами книги Экхарта Толле, "Тишина говорит".\n\n' \
+    answer = f'~\n' \
+             f'Приветствую тебя, {message.from_user.first_name}! \n' \
+             f'Внутренняя тишина - твоя сущностная природа. Что есть тишина? Внутреннее пространство или ' \
+             f'осознание, благодаря которому воспринимаются читаемые сейчас строки.\n' \
+             f'Ты и есть это осознание, принявшее форму личности.\n\n' \
+             f'Послушай о чем говорит тишина. Для продолжения нажми кнопку "Тишина говорит..."\n' \
+             f'~\n' \
              f'Поддержать автора бота - \nЯндекс-кошелек: 41001865866277,\nСБЕР: 2202 2003 3780 3959'
     bot.send_message(message.chat.id, answer, reply_markup=keyboard)
     add_new_user(message)
@@ -44,12 +50,12 @@ def get_citate(message):
         bot.send_message(message.chat.id, first_word, reply_markup=keyboard)
 
 
-def count_users():
-    with open('user_id.pickle', 'rb') as f:
-        users = pickle.load(f)
-        print(f'Всего пользователей: {len(users)}')
+# def count_users():
+#     with open('user_id.pickle', 'rb') as f:
+#         users = pickle.load(f)
+#         print(f'Всего пользователей: {len(users)}')
 
 
-count_users()
+# count_users()
 configure_logging()
 bot.polling()
