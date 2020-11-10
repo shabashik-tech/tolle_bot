@@ -19,7 +19,7 @@ def add_new_user(message):
             USER_ID.add(message.from_user.id)
             with open('user_id.pickle', 'ab') as f:
                 pickle.dump(USER_ID, f)
-                log.info(f'Пользователь {message.from_user.first_name}, добавлен в базу.')
+                log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, добавлен в базу.')
         log.info(f'Пользователь {message.from_user.first_name}, находится в базе.')
 
 
