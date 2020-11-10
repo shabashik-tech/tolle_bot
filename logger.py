@@ -9,3 +9,5 @@ def configure_logging():
     file_handler.setLevel(logging.INFO)
     log.addHandler(file_handler)
     log.setLevel(logging.INFO)
+
+
