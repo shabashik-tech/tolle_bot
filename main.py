@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import telebot
 from settings import TOKEN
 from parser_book import random_citate
@@ -23,8 +25,8 @@ def add_new_user(message):
                 pickle.dump(USER_ID, f)
                 print(f'Загрузка данных в файл - {USER_ID}')
                 log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, добавлен в базу.')
-        print(f'Пользователь {USER_ID} находится в базе')
-        log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, находится в базе.')
+                print(f'Пользователь {USER_ID} находится в базе')
+                log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, находится в базе.')
 
 
 @bot.message_handler(commands=['start'])
@@ -46,7 +48,6 @@ def get_citate(message):
     if message.text == 'Тишина говорит...':
         first_word = random_citate()
         bot.send_message(message.chat.id, first_word, reply_markup=keyboard)
-
 
 configure_logging()
 bot.polling()
