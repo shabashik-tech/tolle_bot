@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+The bot sends a random quote from Tolle's book, Stillness Speaks.
+"""
 
 import telebot
 from settings import TOKEN
