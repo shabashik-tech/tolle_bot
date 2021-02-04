@@ -2,22 +2,31 @@
 """
 The bot sends a random quote from Tolle's book, Stillness Speaks.
 """
-
-import telebot
-from settings import TOKEN
-from parser_book import random_citate
 import pickle
 from logger import log, configure_logging
 
+import telebot
+from parser_book import random_citate, random_image, random_audio
+from settings import TOKEN
 
 bot = telebot.TeleBot(token=TOKEN)
 USER_ID = set()
 
 keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
 keyboard.row('Тишина говорит...')
+keyboard.row('Практика (изображения)...')
+keyboard.row('Практика (аудио)...')
+
+
+def create_user_id_file(message):
+    USER_ID = set()
+    with open('user_id.pickle', 'wb') as file:
+        id = message.from_user.id
+        pickle.dump(USER_ID, file)
 
 
 def add_new_user(message):
+    # create_user_id_file(message)
     with open('user_id.pickle', 'rb') as f:
         USER_ID = pickle.load(f)
         print(f'Загрузка данных из файла - {USER_ID}')
@@ -28,7 +37,7 @@ def add_new_user(message):
                 pickle.dump(USER_ID, f)
                 print(f'Загрузка данных в файл - {USER_ID}')
                 log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, добавлен в базу.')
-                print(f'Пользователь {USER_ID} находится в базе')
+                print(f'Пользователь {USER_ID} - {message.from_user.first_name} находится в базе')
                 log.info(f'Пользователь {message.from_user.id} - {message.from_user.first_name}, находится в базе.')
 
 
@@ -41,7 +50,7 @@ def send_welcome(message):
              f'Ты и есть это осознание, принявшее форму личности.\n\n' \
              f'Послушай о чем говорит тишина. Для продолжения нажми кнопку "Тишина говорит..."\n' \
              f'~\n' \
-             # f'Поддержать автора бота - \nЯндекс-кошелек: 41001865866277,\nСБЕР: 2202 2003 3780 3959'
+        # f'Поддержать автора бота - \nЯндекс-кошелек: 41001865866277,\nСБЕР: 2202 2003 3780 3959'
     bot.send_message(message.chat.id, answer, reply_markup=keyboard)
     add_new_user(message)
 
@@ -51,6 +60,23 @@ def get_citate(message):
     if message.text == 'Тишина говорит...':
         first_word = random_citate()
         bot.send_message(message.chat.id, first_word, reply_markup=keyboard)
+    elif message.text == 'Практика (изображения)...':
+        file = random_image()
+        image = open(file, 'rb')
+        bot.send_photo(
+            message.chat.id,
+            image,
+            reply_markup=keyboard,
+        )
+    elif message.text == 'Практика (аудио)...':
+        file = random_audio()
+        audio = open(file, 'rb')
+        bot.send_audio(
+            message.chat.id,
+            audio,
+            reply_markup=keyboard,
+        )
+
 
 configure_logging()
 bot.polling()
