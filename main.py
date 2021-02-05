@@ -6,13 +6,14 @@ import pickle
 from logger import log, configure_logging
 
 import telebot
-from parser_book import random_citate, random_image, random_audio
+from telebot import types
+from parser_book import random_citate, random_image, random_audio, list_audio
 from settings import TOKEN
 
 bot = telebot.TeleBot(token=TOKEN)
 USER_ID = set()
 
-keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
+keyboard = types.ReplyKeyboardMarkup(True, True)
 keyboard.row('Тишина говорит...')
 keyboard.row('Практика (изображения)...')
 keyboard.row('Практика (аудио)...')
@@ -55,8 +56,45 @@ def send_welcome(message):
     add_new_user(message)
 
 
+@bot.message_handler(commands=['info'])
+def send_welcome(message):
+    markup_inline = types.InlineKeyboardMarkup()    # добавляем клавиатуру
+    item_yes = types.InlineKeyboardButton(text='Да', callback_data='yes')   # добавляем кнопку
+    item_no = types.InlineKeyboardButton(text='Нет', callback_data='no')    # добавляем кнопку
+    markup_inline.add(item_yes, item_no)    # добавляем кнопки в клавиатуру
+
+    bot.send_message(message.chat.id, 'Хотите узнать информацию о себе?', reply_markup=markup_inline)
+    add_new_user(message)
+
+
+# для инлайн кнопок команды /info
+# @bot.callback_query_handler(func=lambda message: True)
+# def answer_info(message):
+#     if message.data == 'yes':
+#         markup_reply = types.ReplyKeyboardMarkup(resize_keyboard=True)
+#         markup_reply.row('Мой ID', 'Мой ник')
+#         markup_reply.row('Назад')
+#         bot.send_message(message.message.chat.id, 'Нажмите одну из кнопок', reply_markup=markup_reply)
+#     elif message.data == 'no':
+#         pass
+
+# для инлайн кнопок Аудио
+@bot.callback_query_handler(func=lambda message: True)
+def download_audio(message):
+    chat_id = message.message.chat.id
+    if 'audio' in message.data:
+        track = message.data.split("_")[1]
+        files = list_audio()
+        for file in files:
+            if track == file:
+                audio = open(file, 'rb')
+                bot.send_audio(chat_id, audio, reply_markup=keyboard)
+    if message.data == 'return_menu':
+        bot.send_message(chat_id, 'Вы в главном меню', reply_markup=keyboard)
+
+
 @bot.message_handler(content_types=['text'])
-def get_citate(message):
+def get_text(message):
     if message.text == 'Тишина говорит...':
         first_word = random_citate()
         bot.send_message(message.chat.id, first_word, reply_markup=keyboard)
@@ -68,14 +106,37 @@ def get_citate(message):
             image,
             reply_markup=keyboard,
         )
+
     elif message.text == 'Практика (аудио)...':
-        file = random_audio()
-        audio = open(file, 'rb')
-        bot.send_audio(
-            message.chat.id,
-            audio,
-            reply_markup=keyboard,
-        )
+        chat_id = message.chat.id
+        text = 'Выберите интересующий файл'
+        bot.send_message(chat_id, text, parse_mode='HTML', reply_markup=audio_keyboard(chat_id))
+
+    # elif message.text == 'Практика (аудио)...':
+    #     file = random_audio()
+    #     audio = open(file, 'rb')
+    #     bot.send_audio(
+    #         message.chat.id,
+    #         audio,
+    #         reply_markup=keyboard,
+    #     )
+
+    elif message.text == 'Мой ID':
+        bot.send_message(message.chat.id, f'Ваш ID: {message.from_user.id}')
+    elif message.text == 'Мой ник':
+        bot.send_message(message.chat.id, f'Ваш username: {message.from_user.first_name}')
+    elif message.text == 'Назад':
+        bot.send_message(message.chat.id, 'Назад', reply_markup=keyboard)
+
+
+# функция для инлайн клавиатуры которая появляется при выборе Аудио: "elif message.text == 'Практика (аудио)...':"
+def audio_keyboard(chat_id):
+    keyboard = types.InlineKeyboardMarkup()
+    files = list_audio()
+    for file in files:
+        keyboard.add(types.InlineKeyboardButton(text=file, callback_data=f'audio_{file}'))
+    keyboard.add(types.InlineKeyboardButton(text='Венруться в меню', callback_data='return_menu'))
+    return keyboard
 
 
 configure_logging()
