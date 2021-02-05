@@ -132,8 +132,8 @@ def audio_keyboard(chat_id):
     keyboard = types.InlineKeyboardMarkup()
     files = list_audio()
     for file in files:
-        keyboard.add(types.InlineKeyboardButton(text=file, callback_data=f'audio_{file}'))
-    keyboard.add(types.InlineKeyboardButton(text='Венруться в меню', callback_data='return_menu'))
+        keyboard.add(types.InlineKeyboardButton(text=f'🎵 {file[6:]}', callback_data=f'audio_{file}'))
+    keyboard.add(types.InlineKeyboardButton(text='⬅ Вернуться в меню', callback_data='return_menu'))
     return keyboard
 
 
