@@ -25,14 +25,6 @@ def random_image():
     return path
 
 
-def random_audio():
-    directory = 'audio'
-    files = os.listdir(directory)
-    random_audio_path = random.choice(files)
-    path = f'audio/{random_audio_path}'
-    return path
-
-
 def list_audio():
     list_audio_files = []
     directory = 'audio'
