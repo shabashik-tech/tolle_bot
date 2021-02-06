@@ -3,7 +3,7 @@ import os
 
 
 def random_citate():
-    with open('book.txt', 'r', encoding='utf-8') as f:
+    with open('scripts/book.txt', 'r', encoding='utf-8') as f:
         book_list = []
         content = f.readlines()
         for i in content:
@@ -31,5 +31,25 @@ def list_audio():
     files = os.listdir(directory)
     for file in files:
         path = f'audio/{file}'
+        list_audio_files.append(path)
+    return list_audio_files
+
+
+def power_of_now():
+    list_audio_files = []
+    directory = 'audio_books/power_of_now'
+    files = os.listdir(directory)
+    for file in files:
+        path = f'audio_books/power_of_now/{file}'
+        list_audio_files.append(path)
+    return list_audio_files
+
+
+def white_noise():
+    list_audio_files = []
+    directory = 'audio_books/white'
+    files = os.listdir(directory)
+    for file in files:
+        path = f'audio_books/white/{file}'
         list_audio_files.append(path)
     return list_audio_files
