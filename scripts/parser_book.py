@@ -37,10 +37,10 @@ def list_audio():
 
 def power_of_now():
     list_audio_files = []
-    directory = 'audio_books/power_of_now'
+    directory = 'audio_books/power'
     files = os.listdir(directory)
     for file in files:
-        path = f'audio_books/power_of_now/{file}'
+        path = f'audio_books/power/{file}'
         list_audio_files.append(path)
     return list_audio_files
 
