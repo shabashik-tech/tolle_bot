@@ -5,6 +5,8 @@
 - вывести случайное изображение из "9 практик";
 - скачать предоставленные на выбор аудиофайлы записей из книги "Практика";
 """
+import time
+
 import telebot
 from telebot import types
 
@@ -152,5 +154,10 @@ def white_keyboard(chat_id):
 
 
 if __name__ == '__main__':
-    configure_logging()
-    bot.polling()
+    while True:
+        try:
+            configure_logging()
+            bot.polling(none_stop=True)
+        except Exception as ex:
+            time.sleep(3)
+            print(ex)
