@@ -10,7 +10,7 @@ import time
 import telebot
 from telebot import types
 
-from scripts.add_user_to_base import add_new_user
+from scripts.work_with_user_id import add_user, read_user_set
 from scripts.logger import configure_logging
 from scripts.parser_book import random_citate, random_image, list_audio, white_noise
 from settings import TOKEN
@@ -44,7 +44,7 @@ def send_welcome(message):
         answer,
         reply_markup=main_keyboard,
     )
-    add_new_user(message)
+    add_user(message)
 
 
 @bot.callback_query_handler(func=lambda message: True)
@@ -118,6 +118,14 @@ def get_text(message):
         bot.send_message(
             message.chat.id,
             '⬅️ Назад',
+            reply_markup=main_keyboard,
+        )
+
+    elif message.text == 'Статистика':
+        answer = read_user_set()
+        bot.send_message(
+            message.chat.id,
+            text=answer,
             reply_markup=main_keyboard,
         )
 
